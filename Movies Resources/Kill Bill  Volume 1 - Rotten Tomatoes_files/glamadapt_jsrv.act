@@ -1,0 +1,222 @@
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+   
+   
+ 
+      
+   
+   
+      
+   
+   
+      
+   
+
+
+      
+   
+ 
+
+
+
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+   
+   
+    
+   
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+/* Generated on : Fri Sep 27 2013 12:32:29 PDT */
+
+
+/* ga_adb=ade;ga_srv=normal;;ga_plf=---- */
+
+
+function GlamAdaptSetInfo(gvar, gval) {
+ if ( ! window.glam_adapt_info ) {
+  window.glam_adapt_info = new Object();
+ }
+ window.glam_adapt_info[gvar]=gval;
+}
+function GlamAdaptGetInfo(gvar) {
+ if ( window.glam_adapt_info && window.glam_adapt_info[gvar]) {
+  return window.glam_adapt_info[gvar];
+ }
+ return null;
+}
+if ( ! window.GlamGetAffiliateInfo ) {
+ window.GlamGetAffiliateInfo = function(pName) {
+  var glam_info = new Object();
+  
+  var glam_affiliate_vars = 'js_mode=show;_ge_=3^2^f98da8dc4f2d2704d984947ffc5b25df;ga_adb=ade;sid=11132138219064137211;browser=None;co=ZA;dma=None;;;flg=64;afid=1002516552;zone=/;nt=b;cc=uk;ec=ron;p=0;p=1;!c=nptr;a_sov=1;atf=o;cnt=q;ec=te;ec=teb;ec=tga;ec=tmu;ec=tmub;ec=tmv;ec=tmvb;ga_dealid=b03031;ga_exdealid=exp;ga_inv=iv98854;ia=pc;lng=en;pec=be;psh=y;rmt=exp;rmt=ov;rnt=324061004;rsk=y;rtbp=1;uk=brashalcohol;uk=google;uk=rsk;vec=blif;vec=sp;vpec=blif;atf=u;pfl=0;dt=n;!c=hagl;!c=hagn;ga_callseq=1;dsid=910428;gszd=-;gsz=888x11:999-970x66:1;tt=j;u=b01xx0000000000000x,g10001s;sz=970x66;tile=1;ord=6732844840735197;ga_ctime=1382190631812;url=04b2jl;seq=1;ux=g-64,1,;_glt=-120:6:15:50:31:812:2013:10:19;a_tz=120;_g_cv=2;;';
+  var vars = glam_affiliate_vars.split(";");
+  for (var i=0;i<vars.length;i++) {
+   var pair = vars[i].split("=");
+   if ( pair[1] ) { glam_info[pair[0]] = pair[1]; }
+  }
+  return ( glam_info[pName] ? glam_info[pName] : null);
+ }
+}
+GlamAdaptSetInfo('srv_ad_id', 0);
+
+GlamAdaptSetInfo('country_code', 'ZA');
+
+GlamAdaptSetInfo('city', 'SILVERTON');
+
+GlamAdaptSetInfo('bw', '1000');
+
+
+
+  /* Served by  [rsukapp34/172.28.0.123] for [www30a3.glam.com] at [Sat Oct 19 2013 6:55:10 PDT] */
+
+
+document.write(' <!-- 970x66 Default Ad //-->');
+
+if ( window.GlamAdaptSetInfo ) { GlamAdaptSetInfo('srv_ad_id', 5000000140);}
+
+
+/* rs = 75 */
+
+window.glam_adapt_ase_rs = 75; 
+
+  /* _ge_ = 1^2^f98da8dc4f2d2704d984947ffc5b25df */
+ /* srv_ad_id=5000000140 / ase=75 */
+
+ 
+
+ 
+  
+ 

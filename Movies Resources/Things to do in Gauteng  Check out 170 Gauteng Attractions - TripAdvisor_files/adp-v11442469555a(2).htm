@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- saved from url=(0063)http://www.tripadvisor.com/adp/adp-v11442469555a.html#adiframe4 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript">
+// File adp.html - Ad Proxy for double click
+// Hash arguments are (optional dd flag), domain, site, zone, and values
+
+var h = "";     // ad params
+var sUrl1 = ""; // constructed ad call
+
+// match will contain the base id of the elem containing the ad params.
+// It may be prefixed with "dd", indicating we need to set the document.domain.
+// The two will be delimited by a "+".
+var match = window.location.href.match(/^[^#]+#(.*)/);
+if (match[1]) {
+  var hashArgs = match[1].split("+");
+  if (hashArgs[0] == "dd") {
+    hashArgs.shift();
+    // list of domains from I18NUtils.java
+    var legalDomains = [
+      "tripadvisor.com",
+      "tripadvisor.ca",
+      "tripadvisor.fr",
+      "tripadvisor.es",
+      "tripadvisor.co.uk",
+      "tripadvisor.ie",
+      "tripadvisor.it",
+      "tripadvisor.de",
+      "tripadvisor.in",
+      "tripadvisor.jp",
+      "tripadvisor.cn",
+      "tripadvisor.tw",
+      "tripadvisor.se",
+      "tripadvisor.com.br",
+      "tripadvisor.dk",
+      "tripadvisor.com.tr",
+      "tripadvisor.com.mx",
+      "tripadvisor.com.au",
+      "tripadvisor.com.sg",
+      "tripadvisor.ru",
+      "tripadvisor.com.gr",
+      "tripadvisor.co.id",
+      "tripadvisor.com.eg",
+      "tripadvisor.co",
+      "tripadvisor.cl",
+      "tripadvisor.com.ve",
+      "tripadvisor.com.pe",
+      "tripadvisor.com.ar"
+    ];
+    // eliminate the subdomain (e.g.: flights) from the document domain.
+    // this requires the host page be in agreement.
+    for (var i = 0; i < legalDomains.length; ++i) {
+      var curDomain = legalDomains[i];
+      var diff = location.hostname.length - curDomain.length;
+      if (diff >= 0 && location.hostname.substr(diff) == curDomain) {
+        document.domain = curDomain;
+        break;
+      }
+    }
+  }
+
+  // Now we should be able to cleanly access an element from the host page.
+  var a_id = hashArgs[0];
+  if (a_id) {
+    try {
+      // retrieve the ad params from the parent frame
+      var a_elem = parent.document.getElementById(a_id + "_url");
+      if (a_elem && a_elem.value) {
+        h = a_elem.value;
+      }
+    }
+    catch (e) {
+      if (top.ta.util.error) {
+        top.ta.util.error.record(e, "general exception while trying to access ad params container elem", null, {"a_id": a_id}, "ERROR");
+      }
+    }
+  }
+
+  var args = h.split("+");
+  if (!args || args.length < 1) {
+    if (top.ta.util.error) {
+      top.ta.util.error.record(null, 'adp.html could not retrieve valid ad params from container elem', null, {"a_id": a_id, "h": h}, 'ERROR');
+    }
+  }
+  else {
+    // The variable values_idx is the index of the first parameter loaded into ta_values.
+    // It can vary based on the number of arguments in the request.
+    var values_idx = 0;
+    var ta_domain = args[values_idx++];
+    if (RegExp("^N[0-9]+$").test(args[values_idx])) {
+      // If the next parameter appears to be a network ID, set ta_dcnetid.
+      var ta_dcnetid = args[values_idx++];
+    }
+    var ta_site = args[values_idx++];
+    var ta_zone = args[values_idx++];
+    var height = args[values_idx++];
+    var width = args[values_idx++];
+    var ta_area = args[values_idx++];
+
+    // slug flag we no longer use
+    if(args[values_idx] == 'true' || args[values_idx] == 'false')
+    {
+      values_idx++;
+    }
+
+    var ta_values = args[values_idx];
+    // not seeing this actually used ( no args[8] etc. )
+    for(var i=values_idx + 1; i<args.length; i++) {
+      ta_values = ta_values + "+" + args[i];
+    }
+
+    var baseUrl = "http://" + ta_domain + "/";
+    if(ta_dcnetid) {
+      baseUrl = baseUrl + ta_dcnetid + "/";
+    }
+    var baseUrlSuffix = "/" + ta_site + "/" + ta_zone + ";" + ta_values + "?";
+    sUrl1 = baseUrl + "adj" + baseUrlSuffix;
+  }
+}
+
+function checkForAd() {
+  // look for images that come back with empty ads
+  var imgArray=document.getElementsByTagName("IMG");
+  if(imgArray) {
+    for(var i=0;i<imgArray.length;i++){
+      if ((imgArray[i].src.indexOf("1x1_spacer.gif")>0) ||
+          (imgArray[i].src.indexOf("817-grey.gif")>0)) {
+        try {
+          // mobile
+          if(top.ta && top.ta.m && top.ta.m.ads) {
+            top.ta.m.ads.collapseAd(this.frameElement.id);
+            return;
+          }
+          // iteratively look through parents until you find this function, then call it
+          for(var lastParent = null, curParent = window.parent;
+              curParent != lastParent;
+              lastParent = curParent, curParent = curParent.parent) {
+            if(curParent.collapseAd){
+              curParent.collapseAd(this.frameElement.id);
+              return;
+            }
+          }
+        } catch(e) {}
+        return;
+      }
+    }
+  }
+
+  if (typeof(top.onAdDisplayed) != "undefined") {
+    top.onAdDisplayed(width);
+  }
+
+  this.frameElement.allowTransparency = true; /* IE */
+  this.frameElement.style.backgroundColor = 'transparent';
+
+  // let the UI thread do some work before we continue
+  setTimeout( sizeIframe, 10 );
+}
+
+function sizeIframe() {
+
+  var bResizeable = adUtils.isResizeable(height, width);
+
+  // variable sized ads
+  if(bResizeable){
+    // 300X250 + 300X600
+    if(width == 300) {
+      height = adUtils.getContentHeight(height, width);
+    // 728X90 + 970X66
+    } else if ( width == 728 ) {
+      height = adUtils.getContentHeight(height, width);
+      if(height == 66) {
+        width = 970;
+      }
+    }
+  }
+
+  this.frameElement.height = parseInt(height);
+  this.frameElement.width = parseInt(width);
+
+  // IE6 and IE7 don't always know the offsetHeight on body load...
+  if(bResizeable && adUtils.isWrongSize(height, document.body.offsetHeight)) {
+    adUtils.setSizeDeferred(height);
+  }
+
+  if(sUrl1.indexOf('PageType=AlsoViewedLB') != -1) {
+    adUtils.recenterLightBox('ALSO_VIEWED_POP', 300);
+  }
+}
+
+var adUtils = {
+
+  peelbackMinWidth: 1229,
+
+  checkSizeDelay: 100,
+
+  isResizeable: function ( adH, adW )  {
+    return (adH == 250 && adW == 300) || ( adH == 90 && adW == 728);
+  },
+
+  isWrongSize: function ( adH, contentH ) {
+    if(adH == 250) {
+      return contentH == 0 || contentH > 590;
+    } else if(adH == 90) {
+      return contentH == 0 || contentH < 81;
+    } else if(adH == 66) {
+      return contentH == 0 || contentH > 80;
+    } else {
+      return false;
+    }
+  },
+
+  getContentHeight: function ( adH, adW ) {
+    if(adH == 250 && adW == 300 && document.body.offsetHeight > 590) {
+      return 600;  // 300X600
+    } else if (adH == 90 && adW == 728) {
+      if( document.body.offsetHeight > 80) {
+        return 90;
+      } else {
+        return 66;
+      }
+    } else {
+      return adH;
+    }
+  },
+
+  setSizeDeferred: function ( adH ) {
+    setTimeout( function() {
+      if(adH == 250 && document.body.offsetHeight > 590) {
+        window.frameElement.height = 600;
+      } else if( adH == 90 && document.body.offsetHeight < 81 ) {
+        window.frameElement.height = 66;
+        window.frameElement.width = 970;
+      } else if( adH == 66 && document.body.offsetHeight > 80 ) {
+        window.frameElement.height = 90;
+        window.frameElement.width = 728;
+      }
+    }, adUtils.checkSizeDelay);
+  },
+
+  recenterLightBox: function (mainDivId, adWidth) {
+    try {
+      var wrapDiv = top.$$('.overlay .inner')[0];
+      var contentDiv = top.ta.id(mainDivId);
+      var overlay = top.ta.retrieve("overlays.current");
+      if( wrapDiv && contentDiv && overlay ) {
+        wrapDiv.style.width = contentDiv.offsetWidth + adWidth +"px";
+        overlay.position();
+      }
+    } catch(e) {
+      if(top.ta) {
+        top.ta.util.error.record(e, 'adp.html: recenterLightBox error!');
+      }
+    }
+  }
+}
+
+</script>
+
+</head>
+<body onload="checkForAd()" style="padding:0; margin:0; border:none;" marginwidth="0" marginheight="0">
+
+<script type="text/javascript">
+  // ad comment for use by ads
+  if (h.length) {
+    var prms = h.split(";");
+    var prm1 = prms[0];
+    if (prm1.charAt(0) == '#') {
+      prm1 = prm1.substr(1); // drop '#'
+    }
+    var othPrms = prm1.split('+');
+    if (othPrms.length > 1 && RegExp("^N[0-9]+$").test(othPrms[1])) {
+      prms[0]= (othPrms.length >= 8) ? "doubleclick domain=" + othPrms[0] + " netid=" + othPrms[1] + " site=" +
+              othPrms[2] + " zone=" + othPrms[3] + " area=" +othPrms[6]+ " " + othPrms[7]: prm1;
+    } else {
+      prms[0]= (othPrms.length >= 7) ? "doubleclick domain=" + othPrms[0] + " site=" + othPrms[1] + " zone=" + othPrms[2] + " area=" +othPrms[5]+ " " + othPrms[6]: prm1;
+    }
+    document.write("\<\!-- Ad tags: " + prms.join(' ') + " --\>");
+  }
+</script><!-- Ad tags: doubleclick domain=ad.doubleclick.net netid=N5349 site=ta.ta.com.s zone=af.south_africa.gauteng area=AF.South_Africa.Gauteng. false PlaceType=GeographicLocation pool=B pos=bottom country=293740 geo=312568 detail=0 rd=com hname=Gauteng gname=South+Africa sz=300X250%2C300X600 tile=4 slice=shared_4 ord=42594152 -->
+
+<div id="adServer">
+  <script type="text/javascript">
+    if (sUrl1.length) {
+      // Suppress for quirksmode pages or narrow pages where peelback covers content
+      if(!top.document.getScrollWidth || top.document.getScrollWidth() < adUtils.peelbackMinWidth) {
+        sUrl1 = sUrl1.replace("dcopt=ist;", "");
+      }
+
+      // ta_domain must end with doubleclick.net (bug 76681)
+      var ta_domain_bits = ta_domain.split('.');
+      if(ta_domain_bits.pop() == 'net' && ta_domain_bits.pop() == 'doubleclick' ) {
+        document.write("<script src=\"" + sUrl1 + "\"><\/script>\n");
+      }
+    }
+  </script><script src="http://ad.doubleclick.net/N5349/adj/ta.ta.com.s/af.south_africa.gauteng;PageType=Attractions;PlaceType=GeographicLocation;pool=B;pos=bottom;country=293740;geo=312568;detail=0;rd=com;hname=Gauteng;gname=South+Africa;sz=300X250%2C300X600;tile=4;slice=shared_4;ord=42594152?"></script>
+
+</div>
+
+
+</body></html>
