@@ -1,28 +1,21 @@
-== README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+The purpose of this Document is provide a Mashup and aggregate movies based on the user search
 
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+- Mashup has been build on ruby in rails
+- gems included nokogiri and open-uri
+
+How it works
+
+Type in the movie of your choice which has played or have ratings
+Then click search
+
+the search will return 3 results from:
+
+- imdb
+
+- rotten tomato
+
+- Meta critic
+
+
+Please if movie will be release 2014, it probably won’t return anything but throw and exception
